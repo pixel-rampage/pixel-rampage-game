@@ -1,12 +1,17 @@
 import pygame
 from game_menu import Menus
-
-
+from player import  Player
+clock = pygame.time.Clock()
 # this function job is to close the game
 def quit_game():
     pygame.quit()
     exit()
-
+def redrawGameWindow(screen,player,player2):
+    
+    
+    screen.fill((0,0,0))
+    player.draw(screen)
+    player2.draw(screen)
 #this function job is to display the start game menu
 def start_game(screen, screen_width, screen_height, buttons_path, text_color):
     menus = Menus()
@@ -37,12 +42,17 @@ def start_game_events(event, button_rect1, button_rect2, buttons_path, text_colo
             quit_game()
         if event.button == 1 and button_rect1.collidepoint(pygame.mouse.get_pos()):
             game_state = "playing"
+            
 
     return buttons_path, text_color, game_state
 
         
 # this is the main function
+
+
 def main():
+    player_one= Player(200, 500,56,56,'player_one')
+    player_two= Player(200, 500,56,56,'player_two')
     pygame.display.set_caption("Pixel Rampage")
     screen_width = 1280
     screen_height = 720
@@ -53,18 +63,26 @@ def main():
     game_state = "start_game"
 
     while True:
+
+        
         if game_state == "start_game":
             start_game_rect1,start_game_rect2 = start_game(screen,screen_width,screen_height, buttons_path, text_color)
         elif game_state == "playing":
-            screen.fill((0, 0, 0)) #this line here is to fill the screen with black
+            player_two.player_move()
+            player_one.player_move()
+            redrawGameWindow(screen,player_one,player_two)
             
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 quit_game()
             if game_state == "start_game":
                 buttons_path, text_color, game_state = start_game_events(event, start_game_rect1, start_game_rect2, buttons_path, text_color, game_state)
-
+            elif game_state== "playing":
+                pass
+ 
+        clock.tick(30)      
         pygame.display.update()
 
 if __name__ == "__main__":
     main()
+    
