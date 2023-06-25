@@ -8,7 +8,11 @@ def quit_game():
     exit()
         
 # this is the main function
+
+
 def main():
+    player_one= Player(200, 500,56,56,'player_one')
+    player_two= Player(200, 500,56,56,'player_two')
     pygame.display.set_caption("Pixel Rampage")
     screen_width = 1280
     screen_height = 720
@@ -69,3 +73,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    
