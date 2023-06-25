@@ -54,10 +54,30 @@ class Button:
         screen.blit(self.text,self.text_rect)
 
 # write puase menu here
+class Pause:
+    def __init__(self,screen_width,screen_height):
+            self.font = pygame.font.Font("assets\\fonts\game_over.ttf",128)
+            self.backgroung_imag=pygame.image.load('assets\menu_assets\pause_menu.png')
+            self.background_rect = self.backgroung_imag.get_rect(center =(screen_width*0.5 , screen_height*0.48))
+            self.pause_button = Button("Resume",(screen_width*0.5, screen_height*0.45),)
+            self.quit_button = Button("Quit",(screen_width * 0.5, screen_height * 0.7))
+        
+            self.screen_width = screen_width
+            self.screen_height = screen_height
 
+    def logo_info(self,position):
+            logo = self.font.render("Pause Game",False,"#F5F5F5")
+            logo_rect = logo.get_rect(midtop = position)
+            return logo,logo_rect          
 
-
-
+    def start_game_draw(self,screen):
+            logo,logo_rect = self.logo_info((self.screen_width*0.5, self.screen_height*0.15))
+            width,height = self.backgroung_imag.get_size() 
+            self.backgroung_imag = pygame.transform.scale(self.backgroung_imag,(width,self.screen_height*0.6))
+            screen.blit(self.backgroung_imag,self.background_rect)
+            screen.blit(logo,logo_rect)
+            self.pause_button.draw(screen)
+            self.quit_button.draw(screen)
 
 
 
@@ -75,6 +95,10 @@ def main():
     screen = pygame.display.set_mode((screen_width,screen_height))
     start_game_menu = StartGameMenu(screen_width, screen_height)
     game_state = "start_game"
+    pause_or_not = False
+    pause_menu=Pause(screen_width,screen_height)
+
+    
 
     while True:
         for event in pygame.event.get():
@@ -85,11 +109,25 @@ def main():
                 start_game_menu.quit_button.hover()
                 if start_game_menu.play_button.button_clicked(event):
                     game_state = "playing"
+
                 if start_game_menu.quit_button.button_clicked(event):
                     quit_game()
+
             elif game_state == "playing":
                 #puase menu events handler
-                pass
+                if event.type == pygame.KEYDOWN:
+                        if event.key ==pygame.K_ESCAPE:
+                                pause_or_not = True
+                if pause_menu.pause_button.button_clicked(event):
+                     pause_or_not = False
+                if pause_menu.quit_button.button_clicked(event):
+                          pause_or_not = False 
+                          game_state = "start_game" 
+
+
+
+
+                
 
 
             
@@ -97,12 +135,19 @@ def main():
 
                 
         if game_state == "start_game":
+            screen.fill((0, 0, 0))
             start_game_menu.start_game_draw(screen)
         elif game_state == "playing":
             screen.fill((0, 0, 0)) #this line here is to fill the screen with black
             # puase menu draw
+            if pause_or_not :
+                 pause_menu.pause_button.hover()
+                 pause_menu.quit_button.hover()
+                 pause_menu.start_game_draw(screen)
+                 
+                 
 
-
+        
 
             ######################################################
 
