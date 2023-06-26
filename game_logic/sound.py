@@ -99,6 +99,12 @@ class Sound:
     def stop_Background_Level2(self):
         self.Background_Level2.stop()
 
+    def stop_win(self):
+        self.win.stop()
+        
+    def stop_loss(self):
+        self.loss.stop()
+
     def stop_jump(self):
         self.jump.stop()
 
