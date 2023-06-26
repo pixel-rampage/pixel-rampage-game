@@ -4,7 +4,7 @@ pygame.init()
 
 class Menus:
     def __init__(self):
-          self.font = pygame.font.Font("assets\\fonts\game_over.ttf",128)
+          self.font = pygame.font.Font("assets/fonts/game_over.ttf",128)
 
     def logo_info(self,position):
         logo = self.font.render("Pixel Rampage",False,"#F5F5F5")

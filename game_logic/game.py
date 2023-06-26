@@ -28,13 +28,13 @@ def start_game(screen, screen_width, screen_height, buttons_path, text_color):
 def start_game_events(event, button_rect1, button_rect2, buttons_path, text_color, game_state):
     if event.type == pygame.MOUSEMOTION:
         if button_rect1.collidepoint(event.pos):
-            buttons_path = ("assets\\menu_assets\\button_on.png",buttons_path[1])
+            buttons_path = ("assets/menu_assets/button_on.png",buttons_path[1])
             text_color = ("#CD7F32",text_color[1])
         elif button_rect2.collidepoint(event.pos):
-            buttons_path = (buttons_path[0],"assets\\menu_assets\\button_on.png")
+            buttons_path = (buttons_path[0],"assets/menu_assets/button_on.png")
             text_color = (text_color[0],"#CD7F32")
         else:
-            buttons_path = ("assets\\menu_assets\\button_off.png","assets\\menu_assets\\button_off.png")
+            buttons_path = ("assets/menu_assets/button_off.png","assets/menu_assets/button_off.png")
             text_color = ("#F5F5F5","#F5F5F5")
     
     if event.type == pygame.MOUSEBUTTONDOWN:
@@ -57,7 +57,7 @@ def main():
     screen_width = 1280
     screen_height = 720
     screen = pygame.display.set_mode((screen_width,screen_height))
-    buttons_path = ("assets\\menu_assets\\button_off.png","assets\\menu_assets\\button_off.png")
+    buttons_path = ("assets/menu_assets/button_off.png","assets/menu_assets/button_off.png")
     text_color = ("#F5F5F5","#F5F5F5")
     start_game_rect1 = start_game_rect2 = None
     game_state = "start_game"

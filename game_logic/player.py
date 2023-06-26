@@ -1,5 +1,5 @@
 import pygame
-
+# from assets.character animation.running import running1
 ##joystick zone joystick zone joystick zone joystick zone joystick zone joystick zone joystick zone 
 ##joystick zone joystick zone joystick zone joystick zone joystick zone joystick zone joystick zone  
 pygame.joystick.init()
@@ -25,15 +25,16 @@ def check_if_run_left():
 
 
 # walk animation
-walk_right=[pygame.transform.scale2x(pygame.image.load(f'assets\character animation\\running\\running{number}.png')) for number in range(1,9)]
+
+walk_right=[pygame.transform.scale2x(pygame.image.load(f'assets/character animation/running/running{number}.png')) for number in range(1,9)]
 walk_left=[pygame.transform.flip(walk,True,False)  for walk in walk_right]
 
 #jump animation
-jump_animation_right=[pygame.transform.scale2x(pygame.image.load(f'assets\character animation\jump\jump{number}.png')) for number in range(1,9)]
+jump_animation_right=[pygame.transform.scale2x(pygame.image.load(f'assets/character animation/jump/jump{number}.png')) for number in range(1,9)]
 jump_animation_left=[pygame.transform.flip(jump,True,False)  for jump in jump_animation_right]
 
 # idel animation 
-idel_right=[pygame.transform.scale2x(pygame.image.load(f'assets\character animation\idel\idel{number}.png')) for number in range(1,7)]
+idel_right=[pygame.transform.scale2x(pygame.image.load(f'assets/character animation/idel/idel{number}.png')) for number in range(1,7)]
 idel_left=[pygame.transform.flip(idel,True,False)  for idel in idel_right]
 class Player(object):
     def __init__(self,player_x,player_y,player_width,player_height,name=None):
