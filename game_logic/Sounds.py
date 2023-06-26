@@ -23,14 +23,13 @@ class Sounds:
             if isinstance(sound, pygame.mixer.Sound):
                 sound.set_volume(volume)
 
-
     def play_background_level1(self, volume=1.0):
-        self.background_level1.set_volume(volume)
-        self.background_level1.play()
+        self.Background_Level1.set_volume(volume)
+        self.Background_Level1.play()
 
     def play_background_level2(self, volume=1.0):
-        self.background_level2.set_volume(volume)
-        self.background_level2.play()
+        self.Background_Level2.set_volume(volume)
+        self.Background_Level2.play()
 
     def play_win(self, volume=1.0):
         self.win.set_volume(volume)
@@ -41,16 +40,16 @@ class Sounds:
         self.loss.play()
 
     def play_end_level(self, volume=1.0):
-        self.end_level.set_volume(volume)
-        self.end_level.play()
+        self.End_Level.set_volume(volume)
+        self.End_Level.play()
 
     def play_jump(self, volume=1.0):
         self.jump.set_volume(volume)
         self.jump.play()
 
     def play_key(self, volume=1.0):
-        self.key.set_volume(volume)
-        self.key.play()
+        self.Key.set_volume(volume)
+        self.Key.play()
 
     def play_attack(self, volume=1.0):
         self.attack.set_volume(volume)
@@ -68,3 +67,35 @@ class Sounds:
         self.resume.set_volume(volume)
         self.resume.play()
 
+    def stop_background_level1(self):
+        self.Background_Level1.stop()
+
+    def stop_background_level2(self):
+        self.Background_Level2.stop()
+
+    def stop_win(self):
+        self.win.stop()
+
+    def stop_loss(self):
+        self.loss.stop()
+
+    def stop_end_level(self):
+        self.End_Level.stop()
+
+    def stop_jump(self):
+        self.jump.stop()
+
+    def stop_key(self):
+        self.Key.stop()
+
+    def stop_attack(self):
+        self.attack.stop()
+
+    def stop_coins(self):
+        self.coins.stop()
+
+    def stop_select(self):
+        self.select.stop()
+
+    def stop_resume(self):
+        self.resume.stop()
