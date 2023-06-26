@@ -8,7 +8,7 @@ def quit_game():
     exit()
 def redrawGameWindow(screen,player,player2):
     
-    
+    # new comment
     screen.fill((0,0,0))
     player.draw(screen)
     player2.draw(screen)
