@@ -14,7 +14,7 @@ class Sound:
         self.coins = pygame.mixer.Sound("assets/audio/coins.mp3")
         self.select = pygame.mixer.Sound("assets/audio/select.wav")
         self.resume = pygame.mixer.Sound("assets/audio/resume.ogg")
-# set and controlling with sound
+# set and controlling with sound's volume
     def set_volume(self, volume):
         self.volume = volume
 
