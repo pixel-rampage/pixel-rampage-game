@@ -75,6 +75,13 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 quit_game()
+                
+            # if event.type == pygame.JOYBUTTONDOWN:
+            #      print(event)   
+            # if event.type == pygame.JOYHATMOTION:
+            #     print(event)
+            # if event.type == pygame.JOYAXISMOTION:
+            #     print(event)             
             if game_state == "start_game":
                 buttons_path, text_color, game_state = start_game_events(event, start_game_rect1, start_game_rect2, buttons_path, text_color, game_state)
             elif game_state== "playing":
@@ -86,3 +93,4 @@ def main():
 if __name__ == "__main__":
     main()
     
+       
