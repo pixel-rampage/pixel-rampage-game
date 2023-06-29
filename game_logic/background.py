@@ -1,29 +1,29 @@
 import pygame
 
 pygame.init()
-
 clock = pygame.time.Clock()
 FPS = 60
-
 # create game window
 SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
-
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("assets\Parallax")
+
 
 # define game variables
 scroll = 0
 
 # images
 ground_image = pygame.image.load(
-    "assets\Parallax\dark_ground_04.png").convert_alpha()
+    "assets\Parallax\\aliens_ground_04-modified.png").convert_alpha()
 ground_width = ground_image.get_width()
 ground_height = ground_image.get_height()
 
 bg_images = []
-for i in range(1, 8):
-    bg_image = pygame.image.load(f"assets\Parallax/{i}.png").convert_alpha()
+for i in range(1, 4):
+    #   bg_image = pygame.image.load(f"assets\Parallax/{i}.png").convert_alpha()
+    bg_image = pygame.image.load(
+        f"assets\Parallax\sky_{i}.png").convert_alpha()
     bg_image = pygame.transform.scale(bg_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
     bg_images.append(bg_image)
 bg_width = bg_images[0].get_width()
@@ -59,17 +59,22 @@ def image(direction):
         image = pygame.transform.scale2x(image)
     elif direction == "tree":
         image = pygame.image.load(
-            "assets\\Parallax\\Tree_2_256b.png").convert_alpha()
+            "assets\Parallax\Alien_tileset_tree_06.png").convert_alpha()
+        # image = pygame.transform.scale2x(image)
+    elif direction == "jump":
+        image = pygame.image.load(
+            "assets\\character_animation\\biue\\jump\\char_blue_jump_up_1.png").convert_alpha()
         image = pygame.transform.scale2x(image)
-    # elif direction == "jump" :
-    # 	image = pygame.image.load("assets\character animation\jump\jump5.png").convert_alpha()
-    # 	image = pygame.transform.scale2x(image)
     elif direction == "land":
         image = pygame.image.load(
-            "assets\\Parallax\\dark_ground_04.png").convert_alpha()
+            "assets\Parallax\\aliens_ground_04-modified.png").convert_alpha()
     elif direction == 'door':
         image = pygame.image.load(
-            "assets\\Parallax\\door_02-modified.png").convert_alpha()
+            "assets\Parallax\door_02-modified.png").convert_alpha()
+    elif direction == "big_land":
+        image = pygame.image.load(
+            "assets\Parallax\\aliens_big_ground_7-modified.png").convert_alpha()
+
     return image
 
 
@@ -78,7 +83,7 @@ class Player(pygame.sprite.Sprite):
         super().__init__()
         self.image = image("right")
         self.rect = self.image.get_rect(
-            midbottom=(100, SCREEN_HEIGHT - (ground_height)))
+            midbottom=(350, SCREEN_HEIGHT - (ground_height)))
         self.x_velocity = 0
         self.y_velocity = 0
         self.on_ground = True
@@ -137,7 +142,7 @@ class Obstacle(pygame.sprite.Sprite):
         key = pygame.key.get_pressed()
         if key[pygame.K_LEFT] and player.sprite.rect.left < 201 and scroll > 0:
             self.rect.x += 5
-        if key[pygame.K_RIGHT] and player.sprite.rect.right > 999 and scroll < 1200:
+        if key[pygame.K_RIGHT] and player.sprite.rect.right > 999 and scroll < 3000:
             self.rect.x -= 5
 
 
@@ -159,7 +164,7 @@ class Objects_to_draw(pygame.sprite.Sprite):
         key = pygame.key.get_pressed()
         if key[pygame.K_LEFT] and player.sprite.rect.left < 201 and scroll > 0:
             self.rect.x += 5
-        if key[pygame.K_RIGHT] and player.sprite.rect.right > 999 and scroll < 1200:
+        if key[pygame.K_RIGHT] and player.sprite.rect.right > 999 and scroll < 3000:
             self.rect.x -= 5
 
 
@@ -167,11 +172,11 @@ def collide():
     for i in range(len(objects.sprites())):
         if objects.sprites()[i].rect.colliderect(player.sprite.rect):
             if player.sprite.x_velocity < 0 and player.sprite.on_ground == False:
-                # player.sprite.rect.left = objects.sprites()[1].rect.right
+                # player.sprite.rect.left = objects.sprites()[i].rect.right
                 player.sprite.x_velocity = 0
 
             if player.sprite.x_velocity > 0 and player.sprite.on_ground == False:
-                # player.sprite.rect.right = objects.sprites()[1].rect.left
+                # player.sprite.rect.right = objects.sprites()[i].rect.left
                 player.sprite.x_velocity = 0
 
             if player.sprite.y_velocity > 0:
@@ -190,19 +195,28 @@ def collide():
 player = pygame.sprite.GroupSingle()
 player.add(Player())
 
+
 # objects that the player collides with
 objects = pygame.sprite.Group()
 for i in range(3):
-    objects.add(Obstacle('land', (ground_width * i), SCREEN_HEIGHT))
+    objects.add(Obstacle('land', (ground_width * i), SCREEN_HEIGHT+20))
 objects.add(Obstacle('land', 1300, SCREEN_HEIGHT-150))
 objects.add(Obstacle('land', 1820, SCREEN_HEIGHT-320))
-for i in range(6, 20):
-    objects.add(Obstacle('land', (ground_width * i), SCREEN_HEIGHT))
+objects.add(Obstacle("big_land", 2730, SCREEN_HEIGHT+500))
+objects.add(Obstacle('land', (ground_width * 10)+20, SCREEN_HEIGHT-220))
+for i in range(11, 13):
+    objects.add(Obstacle('land', (ground_width * i), SCREEN_HEIGHT+20))
+for i in range(16, 20):
+    objects.add(Obstacle('land', (ground_width * i), SCREEN_HEIGHT+20))
+objects.add(Obstacle('land', (ground_width * 13)+70, SCREEN_HEIGHT-150))
+objects.add(Obstacle('land', (ground_width * 15)-50, SCREEN_HEIGHT-150))
+
 
 # objects just to be drown
 objects_d = pygame.sprite.Group()
-objects_d.add(Objects_to_draw('tree', 250, SCREEN_HEIGHT+25))
-objects_d.add(Objects_to_draw('door', 4000, SCREEN_HEIGHT - ground_height))
+objects_d.add(Objects_to_draw('tree', 250, SCREEN_HEIGHT-ground_height+20))
+objects_d.add(Objects_to_draw('door', (ground_width * 19) +
+              (ground_width/4), SCREEN_HEIGHT - ground_height+20))
 
 
 # game loop
@@ -217,10 +231,11 @@ while run:
     key = pygame.key.get_pressed()
     if key[pygame.K_LEFT] and player.sprite.rect.left < 201 and scroll > 0:
         scroll -= 2
-    if key[pygame.K_RIGHT] and player.sprite.rect.right > 999 and scroll < 1200:
+    if key[pygame.K_RIGHT] and player.sprite.rect.right > 999 and scroll < 3000:
         scroll += 2
 
     # draw_trees()
+    # screen.fill('Red')
     objects_d.update()
     objects_d.draw(screen)
     objects.update()
