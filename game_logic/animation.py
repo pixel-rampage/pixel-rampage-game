@@ -1,54 +1,69 @@
 import pygame
 
-class AnimationGame:
-    def __init__(self):
-        pygame.init()
-        self.SCREEN_WIDTH = 1280
-        self.SCREEN_HEIGHT = 720
-        self.screen = pygame.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
-        pygame.display.set_caption('Spritesheets')
-        self.BG = (150, 50, 5)
+pygame.init()
+
+class CharacterAnimation:
+    def __init__(self, steps,color,animation_folder):
+        self.color = color
         self.animation_list = []
-        self.animation_steps = 6
+        self.animation_steps = steps
         self.last_update = pygame.time.get_ticks()
         self.animation_cooldown = 100
         self.frame = 0
+        self.load_animation_images(animation_folder)
 
-    def load_animation_images(self, animation_folder, steps):
+
+    def load_animation_images(self, animation_folder):
         self.animation_list = []
-        for x in range(steps):
-            image_path = f'assets/character animation/{animation_folder}/{animation_folder}{x+1}.png'
-            image = pygame.transform.scale(pygame.image.load(image_path), (200, 200)).convert_alpha()
+        for x in range(self.animation_steps):
+            image_path = f'assets/character_animation/{self.color}/{animation_folder}/{animation_folder}{x+1}.png'
+            image = pygame.transform.scale2x(pygame.image.load(
+                image_path)).convert_alpha()
             self.animation_list.append(image)
 
-    def run_animation(self):
-        run = True
-        while run:
-            self.screen.fill(self.BG)
-            current_time = pygame.time.get_ticks()
-            if current_time - self.last_update >= self.animation_cooldown:
-                self.frame = (self.frame + 1) % self.animation_steps
-                self.last_update = current_time
-            self.screen.blit(self.animation_list[self.frame], (0, 0))
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    run = False
-            pygame.display.update()
+    def run_animation(self, screen, pos):
+        current_time = pygame.time.get_ticks()
+        if current_time - self.last_update >= self.animation_cooldown:
+            self.frame = (self.frame + 1) % self.animation_steps
+            self.last_update = current_time
+        screen.blit(self.animation_list[self.frame], pos)
+        if self.frame%self.animation_steps == 0:
+            return True
 
-        pygame.quit()
 
-# Create an instance of the AnimationGame class and run the game
-game = AnimationGame()
+if __name__ == "__main__":
+    # Create an instance of the AnimationGame class and run the game
 
-# Load and run falling animation
-# game.load_animation_images('falling',8)
+    # Load and idel running animation
+    SCREEN_WIDTH = 1280
+    SCREEN_HEIGHT = 720
+    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+    pygame.display.set_caption('Spritesheets')
+    BG = (150, 50, 5)
 
-# Load and run jump animation
-# game.load_animation_images('jump',8)
-
-# Load and run running animation
-# game.load_animation_images('running',8)
-
-# Load and idel running animation
-game.load_animation_images('idel',6)
-game.run_animation()
+    game1 = CharacterAnimation(8,"red",'attack')
+    game2 = CharacterAnimation(4,"red",'damage')
+    game3 = CharacterAnimation(12,"red",'death')
+    game4 = CharacterAnimation(6,"red",'idle')
+    game5 = CharacterAnimation(8,"red",'jump_up')
+    game6 = CharacterAnimation(8,"red",'jump_down')
+    game7 = CharacterAnimation(8,"red",'run')
+    game8 = CharacterAnimation(3,"red",'shield')
+    list_pos = [(0, 0), (150, 0), (300, 0), (450, 0),
+                (600, 0), (750, 0), (900, 0), (1050, 0)]
+    run = True
+    while run:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
+        screen.fill(BG)
+        game1.run_animation(screen, list_pos[0])
+        game2.run_animation(screen, list_pos[1])
+        game3.run_animation(screen, list_pos[2])
+        game4.run_animation(screen, list_pos[3])
+        game5.run_animation(screen, list_pos[4])
+        game6.run_animation(screen, list_pos[5])
+        game7.run_animation(screen, list_pos[6])
+        game8.run_animation(screen, list_pos[7])
+        pygame.display.update()
+    pygame.quit()
