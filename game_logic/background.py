@@ -130,6 +130,8 @@ class Player(pygame.sprite.Sprite):
 		
 
 		# sounds
+		self.jump_sound  = pygame.mixer.Sound("assets/audio/Jump.mp3")
+		self.jump_sound.set_volume(0.5)
 		self.attack_sound = pygame.mixer.Sound('assets\\audio\loss_sound.wav')
 		self.attack_sound.set_volume(0.5)
 		
@@ -158,10 +160,11 @@ class Player(pygame.sprite.Sprite):
 				
 			# Jumping
 			if keys[pygame.K_UP] and self.on_ground :
+				print(self.on_ground)
 				self.y_velocity = -18
 				self.on_ground = False
 				self.type = image('jump')
-				self.sound.play_jump(0.1)
+				self.jump_sound.play()
 				# self.jump_sound.play()
 				# if self.index == 9:
 
@@ -177,9 +180,7 @@ class Player(pygame.sprite.Sprite):
 				x += 1
 				if x == len(self.type) - 1:
 					x = 0
-	
-				
-				
+		
 
 		if self.name == "player_2":
 
@@ -194,11 +195,11 @@ class Player(pygame.sprite.Sprite):
 				self.flip = False
 				
 			# Jumping
-			if keys[pygame.K_w] and self.on_ground :
+			if keys[pygame.K_w] and self.on_ground:
 				self.y_velocity = -18
 				self.on_ground = False
 				self.type = image('jump')
-				self.sound.play_jump(0.1)
+				self.jump_sound.play()
 			# objects.sprites()[i].rect.colliderect(player.sprite.rect):
 
 			for i in range(len(monsters.sprites())):
@@ -400,7 +401,7 @@ def collide():
 			if player.sprite.y_velocity < 0 : 
 				player.sprite.rect.top = objects.sprites()[i].rect.bottom 
 				player.sprite.y_velocity = 0
-				player.sprite.on_ground = True
+				player.sprite.on_ground = False
 
 		if objects.sprites()[i].rect.colliderect(player_2.sprite.rect): 
 			if player_2.sprite.x_velocity < 0  and player_2.sprite.on_ground == False:
@@ -420,7 +421,7 @@ def collide():
 			if player_2.sprite.y_velocity < 0 : 
 				player_2.sprite.rect.top = objects.sprites()[i].rect.bottom 
 				player_2.sprite.y_velocity = 0
-				player_2.sprite.on_ground = True
+				player_2.sprite.on_ground = False
 
 	current_time = pygame.time.get_ticks()
 	for i in range(len(monsters.sprites())):
@@ -548,7 +549,7 @@ health.add(HealthBar(50,50,200,25,player))
 run = True
 while run:
 	frame_rate = clock.get_fps()
-	print(frame_rate)
+	# print(frame_rate)
 	clock.tick(FPS)
 
 	if game_state == "start_game":
