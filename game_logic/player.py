@@ -51,7 +51,7 @@ idel_right = [pygame.transform.scale2x(pygame.image.load(
 idel_left = [pygame.transform.flip(idel, True, False) for idel in idel_right]
 
 
-class Player(object):
+class Player(pygame.sprite.Sprite):
     def __init__(self, player_x, player_y, player_width, player_height, name=None):
         self.player_x = player_x
         self.player_y = player_y

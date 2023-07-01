@@ -1,4 +1,6 @@
 import pygame
+from game_menu import StartGameMenu,PauseGameMenu
+from sys import exit
 
 pygame.init()
 clock = pygame.time.Clock()
@@ -83,6 +85,8 @@ class Player(pygame.sprite.Sprite):
 		self.x_velocity = 0
 		self.y_velocity = 0
 		self.on_ground = True
+		self.last_update = pygame.time.get_ticks()
+		self.hit_cooldown = 1500
 
 	def update(self):
 		self.x_velocity = 0
@@ -237,11 +241,22 @@ def collide():
 				player.sprite.rect.top = objects.sprites()[i].rect.bottom 
 				player.sprite.y_velocity = 0
 				player.sprite.on_ground = True
+		current_time = pygame.time.get_ticks()
 		for i in range(len(monsters.sprites())):
-			if monsters.sprites()[i].rect.colliderect(player.sprite.rect):
+			if monsters.sprites()[i].rect.colliderect(player.sprite.rect) and current_time - player.sprite.last_update >= player.sprite.hit_cooldown:
 				print('collide')
+				player.sprite.last_update = current_time
 
 	    
+def quit_game():
+    pygame.quit()
+    exit()
+
+#making the menus
+start_game_menu = StartGameMenu(SCREEN_WIDTH, SCREEN_HEIGHT)
+pause_menu = PauseGameMenu(SCREEN_WIDTH, SCREEN_HEIGHT)
+game_state = "start_game"
+pause_or_not = False
 
 
    
@@ -305,30 +320,53 @@ while run:
 	#draw world
 	draw_bg()
 
-	key = pygame.key.get_pressed()
-	if key[pygame.K_LEFT] and player.sprite.rect.left < 201 and scroll > 0:
-		scroll -= 2
-	elif key[pygame.K_RIGHT] and player.sprite.rect.right > 999 and scroll < 3000:
-		scroll += 2
-	
-	
-
-	
-	objects_d.update()  
-	objects_d.draw(screen) 
-	objects.update()  
-	objects.draw(screen) 
-	monsters.update()
-	monsters.draw(screen)
-	player.update() 
-	player.draw(screen) 
-	collide()
+	if game_state == "start_game":
+		screen.fill((0, 0, 0))
+		start_game_menu.start_game_draw(screen)
+	elif game_state == "playing":
+		if pause_or_not:
+			pause_menu.resume_button.hover()
+			pause_menu.quit_button.hover()
+			pause_menu.pause_game_draw(screen)
+		else:
+			key = pygame.key.get_pressed()
+			if key[pygame.K_LEFT] and player.sprite.rect.left < 201 and scroll > 0:
+				scroll -= 2
+			elif key[pygame.K_RIGHT] and player.sprite.rect.right > 999 and scroll < 3000:
+				scroll += 2
+			
+			objects_d.update()  
+			objects_d.draw(screen) 
+			objects.update()  
+			objects.draw(screen) 
+			monsters.update()
+			monsters.draw(screen)
+			player.update() 
+			player.draw(screen) 
+			collide()
 	
 
 	#event handlers
 	for event in pygame.event.get():
 		if event.type == pygame.QUIT:
 			run = False
+		if game_state == "start_game":
+			start_game_menu.play_button.hover()
+			start_game_menu.quit_button.hover()
+			if start_game_menu.play_button.button_clicked(event):
+				game_state = "playing"
+			if start_game_menu.quit_button.button_clicked(event):
+				quit_game()
+		elif game_state == "playing":
+			# puase menu events handler
+			if event.type == pygame.KEYDOWN:
+				if event.key == pygame.K_ESCAPE:
+					pause_or_not = True
+			if pause_menu.resume_button.button_clicked(event):
+				pause_or_not = False
+			if pause_menu.quit_button.button_clicked(event):
+				pause_or_not = False
+				game_state = "start_game"
 
 	pygame.display.update()
 

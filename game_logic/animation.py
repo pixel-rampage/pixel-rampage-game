@@ -12,6 +12,11 @@ class CharacterAnimation:
         self.frame = 0
         self.load_animation_images(animation_folder)
 
+    def make_rect(self,pos):
+        rect = self.animation_list[0].get_rect(midbottom=pos)
+        
+        return rect
+
 
     def load_animation_images(self, animation_folder):
         self.animation_list = []
@@ -21,14 +26,16 @@ class CharacterAnimation:
                 image_path)).convert_alpha()
             self.animation_list.append(image)
 
-    def run_animation(self, screen, pos):
+    def run_animation(self, screen,pos,flep=False):
         current_time = pygame.time.get_ticks()
         if current_time - self.last_update >= self.animation_cooldown:
             self.frame = (self.frame + 1) % self.animation_steps
             self.last_update = current_time
-        screen.blit(self.animation_list[self.frame], pos)
-        if self.frame%self.animation_steps == 0:
-            return True
+        if not flep:
+            image = self.animation_list[self.frame]
+        else:
+            image = pygame.transform.flip(self.animation_list[self.frame],True,False)
+        screen.blit(image, pos)
 
 
 if __name__ == "__main__":
@@ -41,29 +48,30 @@ if __name__ == "__main__":
     pygame.display.set_caption('Spritesheets')
     BG = (150, 50, 5)
 
-    game1 = CharacterAnimation(8,"red",'attack')
-    game2 = CharacterAnimation(4,"red",'damage')
-    game3 = CharacterAnimation(12,"red",'death')
-    game4 = CharacterAnimation(6,"red",'idle')
-    game5 = CharacterAnimation(8,"red",'jump_up')
-    game6 = CharacterAnimation(8,"red",'jump_down')
-    game7 = CharacterAnimation(8,"red",'run')
-    game8 = CharacterAnimation(3,"red",'shield')
-    list_pos = [(0, 0), (150, 0), (300, 0), (450, 0),
-                (600, 0), (750, 0), (900, 0), (1050, 0)]
+    game1 = CharacterAnimation(8,"blue",'attack')
+    game2 = CharacterAnimation(4,"blue",'damage')
+    game3 = CharacterAnimation(12,"blue",'death')
+    game4 = CharacterAnimation(6,"blue",'idle')
+    game5 = CharacterAnimation(8,"blue",'jump_up')
+    game6 = CharacterAnimation(8,"blue",'jump_down')
+    game7 = CharacterAnimation(8,"blue",'run')
+    game8 = CharacterAnimation(3,"blue",'shield')
+    list_pos = [(0, 0), (150, 0), (300, 0), (450, 0), (600, 0), (750, 0), (900, 0), (1050, 0)]
+    
     run = True
     while run:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
         screen.fill(BG)
-        game1.run_animation(screen, list_pos[0])
-        game2.run_animation(screen, list_pos[1])
+        # game1.run_animation(screen, list_pos[0])
+        # game2.run_animation(screen, list_pos[1])
         game3.run_animation(screen, list_pos[2])
-        game4.run_animation(screen, list_pos[3])
-        game5.run_animation(screen, list_pos[4])
-        game6.run_animation(screen, list_pos[5])
-        game7.run_animation(screen, list_pos[6])
-        game8.run_animation(screen, list_pos[7])
+        print((game3.frame + 1) % game3.animation_steps)
+        # game4.run_animation(screen, list_pos[3],True)
+        # game5.run_animation(screen, list_pos[4])
+        # game6.run_animation(screen, list_pos[5])
+        # game7.run_animation(screen, list_pos[6],True)
+        # game8.run_animation(screen, list_pos[7],True)
         pygame.display.update()
     pygame.quit()
