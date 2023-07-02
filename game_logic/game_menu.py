@@ -77,7 +77,7 @@ class PauseGameMenu:
         self.screen_height = screen_height
 
     def logo_info(self, position):
-        logo = self.font.render("Pause Game", False, "#F5F5F5")
+        logo = self.font.render("Pause Game", False, "#505050")
         logo_rect = logo.get_rect(midtop=position)
         return logo, logo_rect
 
