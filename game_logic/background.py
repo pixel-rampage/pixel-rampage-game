@@ -1,13 +1,13 @@
 import pygame
 from sound import *
 from healthbar import *
-from game_menu import StartGameMenu,PauseGameMenu
+from game_menu import StartGameMenu,PauseGameMenu,GameOverMenu
 
 pygame.init()
 clock = pygame.time.Clock()
 FPS = 60
 #create game window
-SCREEN_WIDTH = 1230
+SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("assets\Parallax")
@@ -253,8 +253,6 @@ class Health(pygame.sprite.Sprite):
 		
 	def update(self):
 		self.image = self.type[self.index]
-
-
 		if self.index > 4 :
 			self.index = 0
 
@@ -262,13 +260,10 @@ class Health(pygame.sprite.Sprite):
 class Obstacle(pygame.sprite.Sprite):
 	def __init__(self,type,x_pos,y_pos):
 		super().__init__()
-		
-		
 		material = image(type)
 		self.frames = [material]
 		self.y_pos = y_pos
-		self.x_pos = x_pos
-                        
+		self.x_pos = x_pos        
 		self.animation_index = 0
 		self.image = self.frames[self.animation_index]
 		self.rect = self.image.get_rect(midbottom = (self.x_pos,self.y_pos))
@@ -527,6 +522,10 @@ def quit_game():
 	    
 start_game_menu = StartGameMenu(SCREEN_WIDTH, SCREEN_HEIGHT)
 pause_menu = PauseGameMenu(SCREEN_WIDTH, SCREEN_HEIGHT)
+game_over_menu = GameOverMenu(SCREEN_WIDTH, SCREEN_HEIGHT)
+
+game_over_sound = pygame.mixer.Sound("assets\\audio\\loss_sound.wav")
+game_over_sound.set_volume(0.8)
 game_state = "start_game"
 pause_or_not = False
 
@@ -651,8 +650,6 @@ while run:
 		# screen.fill((0, 0, 0))
 		draw_bg()
 		if pause_or_not:
-			pause_menu.resume_button.hover()
-			pause_menu.quit_button.hover()
 			pause_menu.pause_game_draw(screen)
 		else:
 			key = pygame.key.get_pressed()
@@ -667,11 +664,6 @@ while run:
 			font = pygame.font.Font("assets\\fonts\game_over.ttf", 90)
 			text = font.render(f'Coins : {coil_count}/25', True, "#F5F5F5")
 			text_rect = text.get_rect(center=(SCREEN_WIDTH/2,50))
-			
-			
-			
-				
-			
 			
 			screen.blit(text,text_rect)
 			objects_d.update()  
@@ -692,32 +684,51 @@ while run:
 			health.draw(screen)
 			collide()
 
+	elif game_state == "game_over":
+		game_over_menu.game_over_draw(screen)
+
 	#event handlers
 	for event in pygame.event.get():
 		if event.type == pygame.QUIT:
 			run = False
 		
 		if game_state == "start_game":
-			start_game_menu.play_button.hover()
-			start_game_menu.quit_button.hover()
-			if start_game_menu.play_button.button_clicked(event):
+			start_game_menu.buttons[0].hover()
+			start_game_menu.buttons[1].hover()
+			if start_game_menu.buttons[0].button_clicked(event):
 				game_state = "playing"
-			if start_game_menu.quit_button.button_clicked(event):
+			if start_game_menu.buttons[1].button_clicked(event):
 				quit_game()
 		elif game_state == "playing":
 			# puase menu events handler
 			if event.type == pygame.KEYDOWN:
-				if event.key == pygame.K_ESCAPE or  health.sprite.index == 4:       #  i edited this lineeeeeeeeeee
+				if event.key == pygame.K_ESCAPE:
 					pause_or_not = True
-				if  player.sprite.rect.y > SCREEN_HEIGHT + 100:            #  i edited this lineeeeeeeeeee
-					pause_or_not = True                              #  i edited this lineeeeeeeeeee
-			if pause_menu.resume_button.button_clicked(event):
+			pause_menu.buttons[0].hover()
+			pause_menu.buttons[1].hover()
+			if pause_menu.buttons[0].button_clicked(event):
 				pause_or_not = False
-			if pause_menu.quit_button.button_clicked(event):
+			if pause_menu.buttons[1].button_clicked(event):
 				pause_or_not = False
+				back_ground_.stop()
+				game_state = "start_game"
+
+			if health.sprite.index == 4 or player.sprite.rect.top > SCREEN_HEIGHT + 100:
+				back_ground_.stop()
+				game_over_sound.play()
+				game_state = "game_over"
+
+		elif game_state == "game_over":
+			game_over_menu.buttons[0].hover()
+			game_over_menu.buttons[1].hover()
+			if game_over_menu.buttons[0].button_clicked(event):
+				game_over_sound.stop()
+				back_ground_.play()
+				game_state = "playing"
+			if game_over_menu.buttons[1].button_clicked(event):
+				game_over_sound.stop()
 				game_state = "start_game"
 
 	pygame.display.update()
-
 
 pygame.quit()
