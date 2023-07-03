@@ -696,6 +696,7 @@ while run:
 			start_game_menu.buttons[0].hover()
 			start_game_menu.buttons[1].hover()
 			if start_game_menu.buttons[0].button_clicked(event):
+				pygame.mouse.set_visible(False)
 				game_state = "playing"
 			if start_game_menu.buttons[1].button_clicked(event):
 				quit_game()
@@ -703,10 +704,12 @@ while run:
 			# puase menu events handler
 			if event.type == pygame.KEYDOWN:
 				if event.key == pygame.K_ESCAPE:
+					pygame.mouse.set_visible(True)
 					pause_or_not = True
 			pause_menu.buttons[0].hover()
 			pause_menu.buttons[1].hover()
 			if pause_menu.buttons[0].button_clicked(event):
+				pygame.mouse.set_visible(False)
 				pause_or_not = False
 			if pause_menu.buttons[1].button_clicked(event):
 				pause_or_not = False
@@ -715,6 +718,7 @@ while run:
 
 			if health.sprite.index == 4 or player.sprite.rect.top > SCREEN_HEIGHT + 100:
 				back_ground_.stop()
+				pygame.mouse.set_visible(True)
 				game_over_sound.play()
 				game_state = "game_over"
 
