@@ -2,6 +2,7 @@ import pygame
 
 pygame.init()
 
+
 class LevelBackground:
     def __init__(self, screen_width, screen_height, background_image, position):
         self.screen_width = screen_width

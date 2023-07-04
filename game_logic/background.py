@@ -621,7 +621,6 @@ keys.add(key('key',objects.sprites()[21].rect.x + 5 ,objects.sprites()[21].rect.
 
 
 # objects just to be drown
-print(ground_height)
 objects_d = pygame.sprite.Group()
 objects_d.add(Objects_to_draw('tree',250,SCREEN_HEIGHT-ground_height+20))
 objects_d.add(Objects_to_draw('door',(ground_width * 19)+130,SCREEN_HEIGHT - ground_height+20))

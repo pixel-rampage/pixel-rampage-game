@@ -9,7 +9,6 @@ def quit_game():
     pygame.quit()
     exit()
 
-#this function to get the position for level one
 def ground_list(ground_type,screen_height):
     image1 = pygame.image.load(ground_type[0]).convert_alpha()
     ground_width = image1.get_width()
@@ -41,6 +40,11 @@ def ground_list(ground_type,screen_height):
                         ]
     return ground1_position,ground3_position,ground4_position,ground_height
 
+def coin_list(rects):
+    coins_position =[(rect.x,rect.y-20) for rect in rects]
+    return coins_position
+
+
 
 # this is the main function
 def main():
@@ -68,6 +72,7 @@ def main():
         "assets\\game_objects\\door_off.png",
         "assets\\game_objects\\door_on.png",
     ]
+    coin_path = "assets\game_objects\coin\Gold_"
     ground1_position,ground3_position,ground4_position,ground_height = ground_list(ground_type,screen_height)
     tree_position = (250,screen_height-ground_height)
     door_position = (max(ground1_position, key=lambda x: x[0])[0],screen_height - ground_height)
@@ -77,15 +82,23 @@ def main():
     pause_game = PauseGameMenu(screen_width, screen_height)
     game_over = GameOverMenu(screen_width, screen_height)
     level_one = LevelMaker(screen_width, screen_height, background_type)
-    for ground in ground1_position:
-        level_one.add_ground(ground_type[0], ground)
+
+    for position in ground1_position:
+        level_one.add_ground(ground_type[0], position)
     level_one.add_ground(ground_type[1], (2730, screen_height+600))
-    for ground in ground3_position:
-        level_one.add_ground(ground_type[2], ground)
-    for ground in ground4_position:
-        level_one.add_ground(ground_type[3], ground)
+    for position in ground3_position:
+        level_one.add_ground(ground_type[2], position)
+    for position in ground4_position:
+        level_one.add_ground(ground_type[3], position)
+
     level_one.add_level_object(background_object_list[0],tree_position)
     level_one.add_level_object(background_object_list[1],door_position)
+
+    rects = level_one.get_grounds_rect()
+    coins_position = coin_list(rects)
+    for position in coins_position:
+        level_one.add_coin(coin_path,position)
+    # level_one.add_coin(coin_path,(rects[1].x,rects[1].y-10))
     
 
     while True:
