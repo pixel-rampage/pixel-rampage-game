@@ -1,5 +1,5 @@
 import pygame
-
+from sound import *
 pygame.init()
 
 class Button:
@@ -14,6 +14,7 @@ class Button:
         self.button_rect = self.buttons_images[0].get_rect(center=position)
         text1_pos = (position[0], position[1]-(position[1]*0.02))
         self.text_rect = self.text.get_rect(center=text1_pos)
+        self.button_click_sound= pygame.mixer.Sound("assets\\audio\\mixkit-game-click-1114.wav")
 
     def hover(self):
         if self.button_rect.collidepoint(pygame.mouse.get_pos()):
@@ -25,7 +26,9 @@ class Button:
 
     def button_clicked(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
+            
             if self.button_rect.collidepoint(event.pos) and event.button == 1:
+                self.button_click_sound.play()
                 return True
             else:
                 return False
@@ -59,13 +62,15 @@ class StartGameMenu(Menu):
         self.background_rect = self.backgroung_imag[0].get_rect(topleft=(0, 0))
         self.add_button("Play", (screen_width*0.5, screen_height * 0.45), "assets\\menu_assets\\button_")
         self.add_button("Quit", (screen_width * 0.5, screen_height * 0.7), "assets\\menu_assets\\button_")
-
+        self.starting_menu_music = pygame.mixer.Sound("assets\\audio\\starting_menu_music.mp3")
+        self.starting_menu_music.set_volume(0.4)
     def logo_info(self, position):
         logo = self.font.render("Pixel Rampage", False, "#F5F5F5")
         logo_rect = logo.get_rect(midtop=position)
         return logo, logo_rect
 
     def start_game_draw(self, screen):
+
         logo, logo_rect = self.logo_info(
             (self.screen_width*0.5, self.screen_height*0.15))
         screen.blit(self.backgroung_imag[self.background_frame % 11], self.background_rect)
@@ -76,7 +81,8 @@ class StartGameMenu(Menu):
         if current_time - self.last_update >= self.animation_cooldown:
             self.background_frame = (self.background_frame + 1) % 11
             self.last_update = current_time
-
+    def play_music(self):
+        self.starting_menu_music.play()
 # Pause menu class
 class PauseGameMenu(Menu):
     def __init__(self, screen_width, screen_height):

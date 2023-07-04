@@ -631,9 +631,11 @@ health.add(Health("healthbar"))
 back_ground_ = pygame.mixer.Sound("assets\\audio\Kim Lightyear - The Final.mp3")
 back_ground_.set_volume(0.1)
 
+starting_menu_music = pygame.mixer.Sound("assets\\audio\\starting_menu_music.mp3")
+starting_menu_music.set_volume(0.1)
 not_having_key = True
 key_count = 1
-
+starting_menu_music_one_time=True
 #game loop
 run = True
 while run:
@@ -642,12 +644,19 @@ while run:
 	clock.tick(FPS)
 
 	if game_state == "start_game":
+												
 			screen.fill((0, 0, 0))
 			start_game_menu.start_game_draw(screen)
-		
+			# starting_menu_music.play()	            	
+			# start_game_menu.play_music()
+			# pygame.mixer.Channel(2).play(starting_menu_music) 
+	         
+        												
 	elif game_state == "playing":
+		# starting_menu_music.stop()      
 		# this line here is to fill the screen with black
 		# screen.fill((0, 0, 0))
+
 		draw_bg()
 		if pause_or_not:
 			pause_menu.pause_game_draw(screen)
@@ -660,6 +669,7 @@ while run:
 			
 			# player.sprite.back_ground.play()
 			# pygame.mixer.Channel(6).play(back_ground_)
+   
 			back_ground_.play()
 			font = pygame.font.Font("assets\\fonts\game_over.ttf", 90)
 			text = font.render(f'Coins : {coil_count}/25', True, "#F5F5F5")
@@ -695,9 +705,12 @@ while run:
 		if game_state == "start_game":
 			start_game_menu.buttons[0].hover()
 			start_game_menu.buttons[1].hover()
+			if starting_menu_music_one_time:                    
+				starting_menu_music.play()             #<-------------------------------------------------
 			if start_game_menu.buttons[0].button_clicked(event):
 				pygame.mouse.set_visible(False)
 				game_state = "playing"
+				starting_menu_music.stop()
 			if start_game_menu.buttons[1].button_clicked(event):
 				quit_game()
 		elif game_state == "playing":
@@ -731,6 +744,9 @@ while run:
 				game_state = "playing"
 			if game_over_menu.buttons[1].button_clicked(event):
 				game_over_sound.stop()
+				starting_menu_music_one_time=False
+				
+				starting_menu_music.play()                            
 				game_state = "start_game"
 
 	pygame.display.update()
