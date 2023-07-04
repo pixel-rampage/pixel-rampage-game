@@ -23,6 +23,7 @@ scroll = 0
 ground_image = pygame.image.load("assets\Parallax\\aliens_ground_04-modified.png").convert_alpha()
 ground_width = ground_image.get_width()
 ground_height = ground_image.get_height()
+# print(ground_width,ground_height)
 
 bg_images = []
 for i in range(1, 4):
@@ -620,6 +621,7 @@ keys.add(key('key',objects.sprites()[21].rect.x + 5 ,objects.sprites()[21].rect.
 
 
 # objects just to be drown
+print(ground_height)
 objects_d = pygame.sprite.Group()
 objects_d.add(Objects_to_draw('tree',250,SCREEN_HEIGHT-ground_height+20))
 objects_d.add(Objects_to_draw('door',(ground_width * 19)+130,SCREEN_HEIGHT - ground_height+20))

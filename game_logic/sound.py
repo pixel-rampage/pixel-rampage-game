@@ -18,7 +18,7 @@ class Sound:
     def set_volume(self, volume):
         self.volume = volume
 
-# play sounds of game   
+# play sounds of game
     def play_attack(self,volume=None):
         self.attack.set_volume(volume)
         sound = pygame.mixer.Sound.play(self.attack)
