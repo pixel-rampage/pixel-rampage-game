@@ -9,6 +9,7 @@ def quit_game():
     pygame.quit()
     exit()
 
+#this function to get the position for level one
 def ground_list(ground_type,screen_height):
     image1 = pygame.image.load(ground_type[0]).convert_alpha()
     ground_width = image1.get_width()
