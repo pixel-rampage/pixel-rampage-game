@@ -4,7 +4,7 @@ pygame.init()
 
 class Button:
     def __init__(self, button_text, position, button_image):
-        self.font = pygame.font.Font("assets\\fonts\game_over.ttf", 128)
+        self.font = pygame.font.Font("assets/fonts/game_over.ttf", 128)
         self.button_text = button_text
         button_stats = ["off.png", "on.png"]
         self.selected_button = 0

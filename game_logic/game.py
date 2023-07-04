@@ -57,22 +57,22 @@ def main():
     FPS = 60
 
     #creating some needed variable for the game to run
-    game_over_sound = pygame.mixer.Sound("assets\\audio\\loss_sound.wav")
+    # game_over_sound = pygame.mixer.Sound("assets//audio//loss_sound.wav")
     game_state = "start_game"
     pause_or_not = False
-    background_type = "assets\\backgrounds\\game_background\\sky_"
+    background_type = "assets/backgrounds/game_background/sky_"
     ground_type = [
-        "assets\\grounds\\ground1.png",
-        "assets\\grounds\\ground2.png",
-        "assets\\grounds\\ground3.png",
-        "assets\\grounds\\ground4.png"
+        "assets/grounds/ground1.png",
+        "assets/grounds/ground2.png",
+        "assets/grounds/ground3.png",
+        "assets/grounds/ground4.png"
     ]
     background_object_list = [
-        "assets\\game_objects\\tree.png",
-        "assets\\game_objects\\door_off.png",
-        "assets\\game_objects\\door_on.png",
+        "assets/game_objects/tree.png",
+        "assets/game_objects/door_off.png",
+        "assets/game_objects/door_on.png",
     ]
-    coin_path = "assets\game_objects\coin\Gold_"
+    coin_path = "assets/game_objects/coin/Gold_"
     ground1_position,ground3_position,ground4_position,ground_height = ground_list(ground_type,screen_height)
     tree_position = (250,screen_height-ground_height)
     door_position = (max(ground1_position, key=lambda x: x[0])[0],screen_height - ground_height)
@@ -122,7 +122,7 @@ def main():
                         pygame.mouse.set_visible(True)
                     if event.key == pygame.K_1:
                         pygame.mouse.set_visible(True)
-                        game_over_sound.play()
+                       #  game_over_sound.play()
                         # level_one.level_reset()
                         game_state = "game_over"
 
@@ -143,11 +143,11 @@ def main():
                 if game_over.buttons[0].button_clicked(event):
                     level_one.level_reset()
                     pygame.mouse.set_visible(False)
-                    game_over_sound.stop()
+                   # game_over_sound.stop()
                     game_state = "playing"
                 if game_over.buttons[1].button_clicked(event):
                     level_one.level_reset()
-                    game_over_sound.stop()
+                    # game_over_sound.stop()
                     game_state = "start_game"
             
 

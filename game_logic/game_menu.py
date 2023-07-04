@@ -6,7 +6,7 @@ pygame.init()
 
 class Menu:
     def __init__(self, screen_width, screen_height, font_size):
-        self.font = pygame.font.Font("assets\\fonts\game_over.ttf", font_size)
+        self.font = pygame.font.Font("assets/fonts/game_over.ttf", font_size)
         self.screen_width = screen_width
         self.screen_height = screen_height
         self.buttons = []
@@ -22,12 +22,12 @@ class StartGameMenu(Menu):
         self.background_frame = 0
         self.last_update = pygame.time.get_ticks()
         self.animation_cooldown = 100
-        background_path = "assets\\backgrounds\\start_game_background\\start_game_background_"
+        background_path = "assets/backgrounds/start_game_background/start_game_background_"
         self.background_image = [pygame.image.load(
             f'{background_path}{image_number}.png').convert_alpha() for image_number in range(1, 12)]
         self.background_rect = self.background_image[0].get_rect(
             topleft=(0, 0))
-        button_path = "assets\\menu_assets\\button_"
+        button_path = "assets/menu_assets/button_"
         self.add_button("Play", (screen_width*0.5,
                         screen_height * 0.45), button_path)
         self.add_button("Quit", (screen_width * 0.5,
@@ -56,12 +56,12 @@ class StartGameMenu(Menu):
 class PauseGameMenu(Menu):
     def __init__(self, screen_width, screen_height):
         super().__init__(screen_width, screen_height, 128)
-        background_path = 'assets\menu_assets\pause_menu.png'
+        background_path = 'assets/menu_assets/pause_menu.png'
         self.background_image = pygame.image.load(
             background_path).convert_alpha()
         self.background_rect = self.background_image.get_rect(
             center=(screen_width*0.5, screen_height*0.48))
-        button_path = "assets\\menu_assets\\button_"
+        button_path = "assets/menu_assets/button_"
         self.add_button("Resume", (screen_width*0.5,
                         screen_height*0.45), button_path)
         self.add_button("Main Menu", (screen_width * 0.5,
@@ -91,12 +91,12 @@ class GameOverMenu(Menu):
         self.background_frame = 0
         self.last_update = pygame.time.get_ticks()
         self.animation_cooldown = 100
-        background_path = "assets\\backgrounds\\game_over_background\\game_over_ground"
+        background_path = "assets/backgrounds/game_over_background/game_over_ground"
         self.background_image = [pygame.image.load(
             f'{background_path}{image_number}.png').convert_alpha() for image_number in range(1, 28)]
         self.background_rect = self.background_image[0].get_rect(
             topleft=(0, 0))
-        button_path = "assets\\menu_assets\\game_over_button_"
+        button_path = "assets/menu_assets/game_over_button_"
         self.add_button("Play Again", (screen_width*0.5,
                         screen_height * 0.35), button_path)
         self.add_button("Main Menu", (screen_width * 0.5,
