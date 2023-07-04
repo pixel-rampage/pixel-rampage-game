@@ -1,6 +1,7 @@
 import pygame
 from game_menu import StartGameMenu, PauseGameMenu, GameOverMenu
 from level_maker import LevelMaker
+from player import Player
 from sys import exit
 
 pygame.init()
@@ -82,6 +83,8 @@ def main():
     pause_game = PauseGameMenu(screen_width, screen_height)
     game_over = GameOverMenu(screen_width, screen_height)
     level_one = LevelMaker(screen_width, screen_height, background_type)
+    player = Player("blue", (50, 200),[pygame.K_a, pygame.K_d, pygame.K_SPACE, pygame.K_f])
+    player2 = Player("red", (100, 200),[pygame.K_LEFT, pygame.K_RIGHT, pygame.K_UP, pygame.K_RSHIFT])
 
     for position in ground1_position:
         level_one.add_ground(ground_type[0], position)
@@ -94,8 +97,8 @@ def main():
     level_one.add_level_object(background_object_list[0],tree_position)
     level_one.add_level_object(background_object_list[1],door_position)
 
-    rects = level_one.get_grounds_rect()
-    coins_position = coin_list(rects)
+    ground_rects = level_one.get_grounds_rect()
+    coins_position = coin_list(ground_rects)
     for position in coins_position:
         level_one.add_coin(coin_path,position)
     # level_one.add_coin(coin_path,(rects[1].x,rects[1].y-10))
@@ -134,6 +137,7 @@ def main():
                         pause_or_not = False
                     if pause_game.buttons[1].button_clicked(event):
                         level_one.level_reset()
+                        player.reset_position()
                         pause_or_not = False
                         game_state = "start_game"
             
@@ -142,11 +146,13 @@ def main():
                 game_over.buttons[1].hover()
                 if game_over.buttons[0].button_clicked(event):
                     level_one.level_reset()
+                    player.reset_position()
                     pygame.mouse.set_visible(False)
                     game_over_sound.stop()
                     game_state = "playing"
                 if game_over.buttons[1].button_clicked(event):
                     level_one.level_reset()
+                    player.reset_position()
                     game_over_sound.stop()
                     game_state = "start_game"
             
@@ -159,9 +165,16 @@ def main():
             else:
                 # all the draws here
                 level_one.draw(screen)
+                player.draw(screen)
+                # player2.draw(screen)
 
-                # all the update here
-                level_one.update_position()
+                # all the update here and player2.get_player_position()> screen_width*0.5
+                if player.get_player_position() > screen_width*0.5:
+                    level_one.update_position()
+                # print(ground_rects)
+                level_one.collect_coin(player.get_rect())
+                player.movment(ground_rects)
+                # player2.movment(ground_rects)
 
             
         elif game_state == "game_over":

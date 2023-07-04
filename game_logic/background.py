@@ -136,8 +136,6 @@ class Player(pygame.sprite.Sprite):
 		self.hit_cooldown = 1500
 		self.sound = Sound()
 
-		
-
 		# sounds
 		self.jump_sound  = pygame.mixer.Sound("assets\\audio\jump_c_02-102843.mp3")
 		self.jump_sound.set_volume(0.3)
