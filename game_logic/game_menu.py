@@ -91,7 +91,7 @@ class PauseGameMenu:
         screen.blit(logo, logo_rect)
         self.resume_button.draw(screen)
         self.quit_button.draw(screen)
-
+    
 
 def quit_game():
     pygame.quit()
@@ -135,6 +135,8 @@ def main():
         if game_state == "start_game":
             screen.fill((0, 0, 0))
             start_game_menu.start_game_draw(screen)
+
+            
         elif game_state == "playing":
             # this line here is to fill the screen with black
             screen.fill((0, 0, 0))

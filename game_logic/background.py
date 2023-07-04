@@ -696,7 +696,6 @@ while run:
 	for event in pygame.event.get():
 		if event.type == pygame.QUIT:
 			run = False
-		
 		if game_state == "start_game":
 			start_game_menu.play_button.hover()
 			start_game_menu.quit_button.hover()
