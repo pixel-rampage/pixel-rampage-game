@@ -1,5 +1,5 @@
 import pygame
-from game_objects import LevelObject,Ground
+from game_objects import LevelObject, Ground, Coin
 from level_background import LevelBackground
 
 pygame.init()
@@ -13,6 +13,7 @@ class LevelMaker:
         self.ground_images = []
         self.level_objects = []
         self.coins = []
+        self.collected_coins = []
 
     def add_ground(self, image, position):
         self.ground_images.append(Ground(image, position))
@@ -20,9 +21,17 @@ class LevelMaker:
     def add_level_object(self, image, position):
         self.level_objects.append(LevelObject(image, position))
 
+    def add_coin(self, image, position):
+        self.coins.append(Coin(image, position))
+
     def get_grounds_rect(self):
         return [rect.get_rect() for rect in self.ground_images]
-    
+
+    def collect_coin(self, rect):
+        collected_coin = rect.collidelist(self.coins)
+        if collected_coin != -1:
+            self.collected_coins.append(self.coins.pop(collected_coin))
+
     def level_reset(self):
         for background in self.background_images:
             background.reset_position()
@@ -30,6 +39,8 @@ class LevelMaker:
             ground.reset_position()
         for object in self.level_objects:
             object.reset_position()
+        for coin in self.coins:
+            coin.reset_position()
 
     def update_position(self):
         direction = None
@@ -48,6 +59,9 @@ class LevelMaker:
         for object in self.level_objects:
             object.update_position(direction)
 
+        for coin in self.coins:
+            coin.update_position(direction)
+
     def draw(self, screen):
         for background in self.background_images:
             background.draw(screen)
@@ -58,3 +72,5 @@ class LevelMaker:
         for ground in self.ground_images:
             ground.draw(screen)
 
+        for coin in self.coins:
+            coin.draw(screen)

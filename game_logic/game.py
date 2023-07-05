@@ -1,6 +1,7 @@
 import pygame
 from game_menu import StartGameMenu, PauseGameMenu, GameOverMenu
 from level_maker import LevelMaker
+from player import Player
 from sys import exit
 
 pygame.init()
@@ -9,7 +10,6 @@ def quit_game():
     pygame.quit()
     exit()
 
-#this function to get the position for level one
 def ground_list(ground_type,screen_height):
     image1 = pygame.image.load(ground_type[0]).convert_alpha()
     ground_width = image1.get_width()
@@ -41,6 +41,11 @@ def ground_list(ground_type,screen_height):
                         ]
     return ground1_position,ground3_position,ground4_position,ground_height
 
+def coin_list(rects):
+    coins_position =[(rect.x,rect.y-20) for rect in rects]
+    return coins_position
+
+
 
 # this is the main function
 def main():
@@ -68,6 +73,7 @@ def main():
         "assets\\game_objects\\door_off.png",
         "assets\\game_objects\\door_on.png",
     ]
+    coin_path = "assets\game_objects\coin\Gold_"
     ground1_position,ground3_position,ground4_position,ground_height = ground_list(ground_type,screen_height)
     tree_position = (250,screen_height-ground_height)
     door_position = (max(ground1_position, key=lambda x: x[0])[0],screen_height - ground_height)
@@ -77,15 +83,25 @@ def main():
     pause_game = PauseGameMenu(screen_width, screen_height)
     game_over = GameOverMenu(screen_width, screen_height)
     level_one = LevelMaker(screen_width, screen_height, background_type)
-    for ground in ground1_position:
-        level_one.add_ground(ground_type[0], ground)
+    player = Player("blue", (50, 200),[pygame.K_a, pygame.K_d, pygame.K_SPACE, pygame.K_f])
+    player2 = Player("red", (100, 200),[pygame.K_LEFT, pygame.K_RIGHT, pygame.K_UP, pygame.K_RSHIFT])
+
+    for position in ground1_position:
+        level_one.add_ground(ground_type[0], position)
     level_one.add_ground(ground_type[1], (2730, screen_height+600))
-    for ground in ground3_position:
-        level_one.add_ground(ground_type[2], ground)
-    for ground in ground4_position:
-        level_one.add_ground(ground_type[3], ground)
+    for position in ground3_position:
+        level_one.add_ground(ground_type[2], position)
+    for position in ground4_position:
+        level_one.add_ground(ground_type[3], position)
+
     level_one.add_level_object(background_object_list[0],tree_position)
     level_one.add_level_object(background_object_list[1],door_position)
+
+    ground_rects = level_one.get_grounds_rect()
+    coins_position = coin_list(ground_rects)
+    for position in coins_position:
+        level_one.add_coin(coin_path,position)
+    # level_one.add_coin(coin_path,(rects[1].x,rects[1].y-10))
     
 
     while True:
@@ -121,6 +137,7 @@ def main():
                         pause_or_not = False
                     if pause_game.buttons[1].button_clicked(event):
                         level_one.level_reset()
+                        player.reset_position()
                         pause_or_not = False
                         game_state = "start_game"
             
@@ -129,11 +146,13 @@ def main():
                 game_over.buttons[1].hover()
                 if game_over.buttons[0].button_clicked(event):
                     level_one.level_reset()
+                    player.reset_position()
                     pygame.mouse.set_visible(False)
                     game_over_sound.stop()
                     game_state = "playing"
                 if game_over.buttons[1].button_clicked(event):
                     level_one.level_reset()
+                    player.reset_position()
                     game_over_sound.stop()
                     game_state = "start_game"
             
@@ -146,9 +165,16 @@ def main():
             else:
                 # all the draws here
                 level_one.draw(screen)
+                player.draw(screen)
+                # player2.draw(screen)
 
-                # all the update here
-                level_one.update_position()
+                # all the update here and player2.get_player_position()> screen_width*0.5
+                if player.get_player_position() > screen_width*0.5:
+                    level_one.update_position()
+                # print(ground_rects)
+                level_one.collect_coin(player.get_rect())
+                player.movment(ground_rects)
+                # player2.movment(ground_rects)
 
             
         elif game_state == "game_over":

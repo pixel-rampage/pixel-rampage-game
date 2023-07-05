@@ -136,8 +136,6 @@ class Player(pygame.sprite.Sprite):
 		self.hit_cooldown = 1500
 		self.sound = Sound()
 
-		
-
 		# sounds
 		self.jump_sound  = pygame.mixer.Sound("assets\\audio\jump_c_02-102843.mp3")
 		self.jump_sound.set_volume(0.3)
@@ -621,7 +619,6 @@ keys.add(key('key',objects.sprites()[21].rect.x + 5 ,objects.sprites()[21].rect.
 
 
 # objects just to be drown
-print(ground_height)
 objects_d = pygame.sprite.Group()
 objects_d.add(Objects_to_draw('tree',250,SCREEN_HEIGHT-ground_height+20))
 objects_d.add(Objects_to_draw('door',(ground_width * 19)+130,SCREEN_HEIGHT - ground_height+20))

@@ -120,8 +120,68 @@ class Sound:
     def stop_resume(self):
         self.resume.stop()
 
+import pygame
+
+pygame.init()
+pygame.mixer.init()
+
+
+class MusicSound:
+    def __init__(self, sound_path, volume):
+        self.sound = pygame.mixer.Sound(sound_path)
+        self.volume = volume
+
+    def play_sound(self):
+        self.sound.set_volume(self.volume)
+        pygame.mixer.Sound.play(self.sound)
+
+    def stop_sound(self):
+        self.sound.stop()
+
+
+def main():
+    # building the screen
+    pygame.display.set_caption("Pixel Rampage")
+    screen_width = 1280
+    screen_height = 720
+    screen = pygame.display.set_mode((screen_width, screen_height))
+    clock = pygame.time.Clock()
+    FPS = 60
+    pygame.mixer.set_num_channels(10)
+    sound_jump = Sound("assets\\audio\\Jump.mp3", 0.5)
+    srting_aurio = "Audio"
+    last_update = pygame.time.get_ticks()
+    counter = 0
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+        screen.fill((255, 255, 255))
+        current_time = pygame.time.get_ticks()
+        if srting_aurio == "Audio":
+            sound_jump.play_sound()
+            srting_aurio == ""
+            last_update = current_time
+            counter+=1
+            print(counter)
+        elif last_update - current_time >=100000000:
+            srting_aurio == "Audio"
+
+
+        # frame_rate = clock.get_fps()
+        # print(frame_rate)
+        clock.tick(FPS)
+        pygame.display.update()
+
+
+if __name__ == "__main__":
+    main()
+
+
     
-if __name__== "__main__":
-    sound0 = Sound()
-    sound0.play_loss()
-    print("Audio")
+# if __name__== "__main__":
+#     sound0 = Sound()
+#     sound0.play_loss()
+#     print("Audio")
