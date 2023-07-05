@@ -7,7 +7,7 @@ class LevelObject:
     def __init__(self, image, position):
         self.image = pygame.image.load(image).convert_alpha()
         self.rect = self.image.get_rect(midbottom=position)
-        self.defult_position = position
+        self.default_position = position
 
     def update_position(self, direction):
         if direction == True:
@@ -17,7 +17,7 @@ class LevelObject:
 
     def reset_position(self):
         self.rect = self.image.get_rect(
-            midbottom=self.defult_position)
+            midbottom=self.default_position)
 
     def draw(self, screen):
         screen.blit(self.image, self.rect)
@@ -33,20 +33,21 @@ class Ground(LevelObject):
 
 class Coin:
     def __init__(self, image, position):
-        self.images = [pygame.image.load(f"{image}{image_number}.png").convert_alpha() for image_number in range(1,11)]
-        self.rect = self.images[0].get_rect(bottomleft = position)
-        self.defult_position = position
+        self.images = [pygame.image.load(
+            f"{image}{image_number}.png").convert_alpha() for image_number in range(1, 11)]
+        self.rect = self.images[0].get_rect(bottomleft=position)
+        self.default_position = position
         self.last_update = pygame.time.get_ticks()
         self.animation_cooldown = 60
         self.frame = 0
 
     def get_rect(self):
         return self.rect
-    
+
     def reset_position(self):
-        self.rect = self.images[0].get_rect(bottomleft = self.defult_position)
-    
-    def update_position(self,direction):
+        self.rect = self.images[0].get_rect(bottomleft=self.default_position)
+
+    def update_position(self, direction):
         if direction == True:
             self.rect.x -= 5
         elif direction == False:
@@ -62,9 +63,11 @@ class Coin:
         self.animation()
         screen.blit(self.images[self.frame], self.rect)
 
+
 class Key:
     def __init__(self, image, position):
-        self.images = [pygame.image.load(f"{image}{image_number}.png").convert_alpha() for image_number in range(1, 24)]
+        self.images = [pygame.image.load(
+            f"{image}{image_number}.png").convert_alpha() for image_number in range(1, 24)]
         self.rect = self.images[0].get_rect(bottomleft=position)
         self.default_position = position
         self.last_update = pygame.time.get_ticks()
@@ -73,14 +76,14 @@ class Key:
 
     def get_rect(self):
         return self.rect
-    
+
     def reset_position(self):
         self.rect = self.images[0].get_rect(bottomleft=self.default_position)
-    
+
     def update_position(self, direction):
-        if direction == "left":
+        if direction == True:
             self.rect.x -= 5
-        elif direction == "right":
+        elif direction == False:
             self.rect.x += 5
 
     def animation(self):
