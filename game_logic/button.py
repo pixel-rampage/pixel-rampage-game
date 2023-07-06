@@ -1,5 +1,5 @@
 import pygame
-from sound import Sound
+# from sound import Sound
 
 pygame.init()
 
@@ -14,7 +14,7 @@ class Button:
         self.button_rect = self.buttons_images[0].get_rect(center=position)
         text1_pos = (position[0], position[1]-(position[1]*0.02))
         self.text_rect = self.text.get_rect(center=text1_pos)
-        self.button_sound = Sound("assets\\audio\\button_click_sound.wav")
+        # self.button_sound = Sound("assets\\audio\\button_click_sound.wav")
 
     def hover(self):
         if self.button_rect.collidepoint(pygame.mouse.get_pos()):
@@ -27,7 +27,7 @@ class Button:
     def button_clicked(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
             if self.button_rect.collidepoint(event.pos) and event.button == 1:
-                self.button_sound.play_sound(1)
+                # self.button_sound.play_sound(1)
                 return True
             else:
                 return False

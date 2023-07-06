@@ -120,3 +120,33 @@ class GameOverMenu(Menu):
         if current_time - self.last_update >= self.animation_cooldown:
             self.background_frame = (self.background_frame + 1) % 11
             self.last_update = current_time
+
+class WinningMenu(Menu):
+    def __init__(self, screen_width, screen_height):
+        super().__init__(screen_width, screen_height, 256)
+        self.text_frame = 0
+        self.last_update = pygame.time.get_ticks()
+        self.animation_cooldown = 500
+        self.text = self.font.render("thank you for playing", False, "red")
+        self.text_rect = self.text.get_rect(midbottom=(screen_width/2,screen_height))
+        self.played_sound = False
+
+    def play_sound(self):
+        if not self.played_sound:
+            end_game_sound = pygame.mixer.Sound("assets\\audio\\win_sound.mp3")
+            end_game_sound.set_volume(0.6)
+            end_game_sound.play()
+            self.played_sound = True
+
+
+    def end_game_draw(self, screen):
+        self.play_sound()
+        screen.fill((255,255,255))
+        screen.blit(self.text, self.text_rect)
+        current_time = pygame.time.get_ticks()
+        if current_time - self.last_update >= self.animation_cooldown:
+            if self.text_rect.midbottom[1]>1:
+                self.text_rect.y-=50
+            else:
+                self.text_rect.y = self.screen_height
+            self.last_update = current_time

@@ -1,7 +1,7 @@
 import pygame
 from sound import Sound
 
-sound1=Sound()
+# sound1=Sound()
 
 # Colors these colors for modify the color of health bar
 BLACK = (0, 0, 0)

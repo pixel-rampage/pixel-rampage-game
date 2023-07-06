@@ -1,7 +1,7 @@
 import pygame
 from sound import *
 from healthbar import *
-from game_menu import StartGameMenu,PauseGameMenu
+from game_menu import StartGameMenu,PauseGameMenu,GameOverMenu,WinningMenu
 
 pygame.init()
 clock = pygame.time.Clock()
@@ -9,7 +9,7 @@ FPS = 60
 #create game window
 SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
-screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT),pygame.FULLSCREEN)
 pygame.display.set_caption("assets\Parallax")
 
 
@@ -385,6 +385,7 @@ class Objects_to_draw(pygame.sprite.Sprite):
 		
 		
 		self.type = image(type)
+		self.name = type
 		# self.frames = [self.type]
 		self.x_pos = x_pos
 		self.y_pos = y_pos
@@ -593,7 +594,7 @@ class key(pygame.sprite.Sprite):
 
 
 def collide():
-	
+	global game_state
 
 	for i in range(len(objects_level_2.sprites())):	                              #5555555555
 		if objects_level_2.sprites()[i].rect.colliderect(player_level_2.sprite.rect): 
@@ -658,6 +659,11 @@ def collide():
 			player_level_2_2.sprite.last_update = current_time
 			health.sprite.index += 1
 			pygame.mixer.Channel(7).play(player_level_2.sprite.damage)
+
+	for i in range(len(objects_d_level_2.sprites())):
+		if objects_d_level_2.sprites()[i].name == "chess":
+			if objects_d_level_2.sprites()[i].rect.colliderect(player_level_2.sprite.rect) or objects_d_level_2.sprites()[i].rect.colliderect(player_level_2_2.sprite.rect):
+				game_state = "end_game"
 			
 
 	global key_count
@@ -686,10 +692,20 @@ def quit_game():
 	    
 start_game_menu = StartGameMenu(SCREEN_WIDTH, SCREEN_HEIGHT)
 pause_menu = PauseGameMenu(SCREEN_WIDTH, SCREEN_HEIGHT)
+game_over_menu = GameOverMenu(SCREEN_WIDTH, SCREEN_HEIGHT)
+winning_menu = WinningMenu(SCREEN_WIDTH,SCREEN_HEIGHT)
 game_state = "start_game"
 pause_or_not = False
 
-   
+play_starting_menu_music_one_time=True
+start_game_sound = pygame.mixer.Sound("assets\\audio\\starting_menu_music.mp3")
+start_game_sound.set_volume(0.6)
+
+game_over_sound = pygame.mixer.Sound("assets\\audio\\loss_sound.wav")
+game_over_sound.set_volume(0.8)
+
+pause_menu_sound = pygame.mixer.Sound("assets\\audio\\selectmenu.mp3")
+pause_menu_sound.set_volume(0.8)
 # groups         these groups should be in the level class 
 
 
@@ -834,6 +850,7 @@ health.add(Health("healthbar"))
 		
 
 back_ground_ = pygame.mixer.Sound("assets\\audio\\b_Level1.ogg")
+played_sound = False
 back_ground_.set_volume(0.1)
 
 not_having_key = True
@@ -856,8 +873,6 @@ while run:
 		draw_bg()
 		
 		if pause_or_not:
-			pause_menu.resume_button.hover()
-			pause_menu.quit_button.hover()
 			pause_menu.pause_game_draw(screen)
 		else:
 			key = pygame.key.get_pressed()
@@ -870,7 +885,6 @@ while run:
 			
 			# player.sprite.back_ground.play()
 			# pygame.mixer.Channel(6).play(back_ground_)
-			back_ground_.play()
 			font = pygame.font.Font("assets\\fonts\game_over.ttf", 90)
 			text = font.render(f'Coins : {coil_count}/21', True, "#F5F5F5")
 			text_rect = text.get_rect(center=(SCREEN_WIDTH/2,70))
@@ -898,6 +912,13 @@ while run:
 			collide()
 			screen.blit(text,text_rect)
 			# print(len(objects_level_2.sprites()))
+
+	elif game_state == "game_over":
+		game_over_menu.game_over_draw(screen)
+
+	elif game_state == "end_game":
+		back_ground_.stop()
+		winning_menu.end_game_draw()
 			
 
 	#event handlers
@@ -906,26 +927,57 @@ while run:
 			run = False
 		
 		if game_state == "start_game":
-			start_game_menu.play_button.hover()
-			start_game_menu.quit_button.hover()
-			if start_game_menu.play_button.button_clicked(event):
+			start_game_menu.buttons[0].hover()
+			start_game_menu.buttons[1].hover()
+			if play_starting_menu_music_one_time:
+				start_game_sound.play(loops=-1)
+			if start_game_menu.buttons[0].button_clicked(event):
+				start_game_sound.stop()
+				back_ground_.play(loops=-1)
+				pygame.mouse.set_visible(False)
 				game_state = "playing"
-			if start_game_menu.quit_button.button_clicked(event):
+			if start_game_menu.buttons[1].button_clicked(event):
 				quit_game()
 		elif game_state == "playing":
 			# puase menu events handler
 			if event.type == pygame.KEYDOWN:
-				if event.key == pygame.K_ESCAPE or  health.sprite.index == 4:       #  i edited this lineeeeeeeeeee
+				if event.key == pygame.K_ESCAPE:
+					back_ground_.stop()
+					pause_menu_sound.play()
+					pygame.mouse.set_visible(True)
 					pause_or_not = True
-				# if  player.sprite.rect.y > SCREEN_HEIGHT + 100:            #  i edited this lineeeeeeeeeee
-				# 	pause_or_not = True                              #  i edited this lineeeeeeeeeee
+			
 
-				if  player_level_2.sprite.rect.y > SCREEN_HEIGHT + 100:            #  i edited this lineeeeeeeeeee
-					pause_or_not = True    
-			if pause_menu.resume_button.button_clicked(event):
+			pause_menu.buttons[0].hover()
+			pause_menu.buttons[1].hover()
+			if pause_menu.buttons[0].button_clicked(event):
+				back_ground_.play(loops=-1)
+				pygame.mouse.set_visible(False)
 				pause_or_not = False
-			if pause_menu.quit_button.button_clicked(event):
+			if pause_menu.buttons[1].button_clicked(event):
+				back_ground_.stop()
+				start_game_sound.play(loops=-1)
+				play_starting_menu_music_one_time = False
 				pause_or_not = False
+				game_state = "start_game"
+		
+			if health.sprite.index == 4 or player_level_2.sprite.rect.top > SCREEN_HEIGHT + 100 or player_level_2_2.sprite.rect.top > SCREEN_HEIGHT + 100:
+				back_ground_.stop()
+				pygame.mouse.set_visible(True)
+				game_over_sound.play()
+				game_state = "game_over"
+
+		elif game_state == "game_over":
+			game_over_menu.buttons[0].hover()
+			game_over_menu.buttons[1].hover()
+			if game_over_menu.buttons[0].button_clicked(event):
+				game_over_sound.stop()
+				back_ground_.play(loops=-1)
+				game_state = "playing"
+			if game_over_menu.buttons[1].button_clicked(event):
+				play_starting_menu_music_one_time = False
+				start_game_sound.play(loops=-1)
+				game_over_sound.stop()
 				game_state = "start_game"
 
 	pygame.display.update()

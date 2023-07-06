@@ -1,9 +1,10 @@
 import pygame
 from sound import *
 from healthbar import *
-from game_menu import StartGameMenu,PauseGameMenu
+from game_menu import StartGameMenu,PauseGameMenu,GameOverMenu,WinningMenu
 
 pygame.init()
+pygame.mixer.init()
 clock = pygame.time.Clock()
 FPS = 60
 #create game window
@@ -12,7 +13,7 @@ SCREEN_HEIGHT = 720
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("assets\Parallax")
 
-
+# pygame.FULLSCREEN
 pygame.mixer.set_num_channels(10)
 
 #define game variables
@@ -344,7 +345,7 @@ class Objects_to_draw(pygame.sprite.Sprite):
 	def __init__(self,type,x_pos,y_pos):
 		super().__init__()
 		
-		
+		self.name = type
 		material = image(type)
 		self.frames = [material]
 		self.y_pos = y_pos
@@ -515,6 +516,7 @@ class key(pygame.sprite.Sprite):
 			self.kill()
 				
 def collide():
+	global game_state
 	
 	for i in range(len(objects.sprites())):
 		if objects.sprites()[i].rect.colliderect(player.sprite.rect): 
@@ -569,6 +571,11 @@ def collide():
 			player_2.sprite.last_update = current_time
 			health.sprite.index += 1
 			pygame.mixer.Channel(5).play(player_2.sprite.damage)
+
+	for i in range(len(objects_d.sprites())):
+		if objects_d.sprites()[i].name == "door":
+			if objects_d.sprites()[i].rect.colliderect(player_2.sprite.rect) or objects_d.sprites()[i].rect.colliderect(player.sprite.rect):
+				game_state = "end_game"
 			
 
 	global key_count
@@ -597,8 +604,20 @@ def quit_game():
 	    
 start_game_menu = StartGameMenu(SCREEN_WIDTH, SCREEN_HEIGHT)
 pause_menu = PauseGameMenu(SCREEN_WIDTH, SCREEN_HEIGHT)
+game_over_menu = GameOverMenu(SCREEN_WIDTH, SCREEN_HEIGHT)
+winning_menu = WinningMenu(SCREEN_WIDTH,SCREEN_HEIGHT)
 game_state = "start_game"
 pause_or_not = False
+
+play_starting_menu_music_one_time=True
+start_game_sound = pygame.mixer.Sound("assets\\audio\\starting_menu_music.mp3")
+start_game_sound.set_volume(0.6)
+
+game_over_sound = pygame.mixer.Sound("assets\\audio\\loss_sound.wav")
+game_over_sound.set_volume(0.8)
+
+pause_menu_sound = pygame.mixer.Sound("assets\\audio\\selectmenu.mp3")
+pause_menu_sound.set_volume(0.8)
 
    
 # groups         these groups should be in the level class 
@@ -701,6 +720,22 @@ keys.add(key('key',objects.sprites()[21].rect.x + 5 ,objects.sprites()[21].rect.
 objects_d = pygame.sprite.Group()
 objects_d.add(Objects_to_draw('tree',250,SCREEN_HEIGHT-ground_height+20))
 objects_d.add(Objects_to_draw('door',(ground_width * 19)+130,SCREEN_HEIGHT - ground_height+20))
+# for i in range(2):
+# 	objects_d.add(Objects_to_draw('wall',6188 * i ,750))
+# objects_d.add(Objects_to_draw('f_ground',90,SCREEN_HEIGHT+100))
+# for i in range(1,10):
+# 	objects_d.add(Objects_to_draw('ground',ground_2_width/2 + (i * ground_2_width),SCREEN_HEIGHT))
+# for i in range(10,13):
+# 	objects_d.add(Objects_to_draw('ground',ground_2_width/2 + (i * ground_2_width),SCREEN_HEIGHT-80))
+# for i in range(13,16):
+# 	objects_d.add(Objects_to_draw('ground',ground_2_width/2 + (i * ground_2_width),SCREEN_HEIGHT))
+# for i in range(16,19):
+# 	objects_d.add(Objects_to_draw('ground',ground_2_width/2 + (i * ground_2_width),SCREEN_HEIGHT+50))
+# for i in range(19,21):
+# 	objects_d.add(Objects_to_draw('ground',ground_2_width/2 + (i * ground_2_width),SCREEN_HEIGHT))
+# objects_d.add(Objects_to_draw('s_ground',ground_2_width/2 + (21 * ground_2_width),SCREEN_HEIGHT))
+# for i in range(0,8):
+# 	objects_d.add(Objects_to_draw('up_ground',ground_2_width/2 + (i * ground_2_width),120))
 
 
 
@@ -711,6 +746,8 @@ health.add(Health("healthbar"))
 		
 
 back_ground_ = pygame.mixer.Sound("assets\\audio\Kim Lightyear - The Final.mp3")
+played = False
+
 back_ground_.set_volume(0.1)
 
 not_having_key = True
@@ -733,8 +770,6 @@ while run:
 		draw_bg()
 		
 		if pause_or_not:
-			pause_menu.resume_button.hover()
-			pause_menu.quit_button.hover()
 			pause_menu.pause_game_draw(screen)
 		else:
 			key = pygame.key.get_pressed()
@@ -745,7 +780,6 @@ while run:
 			
 			# player.sprite.back_ground.play()
 			# pygame.mixer.Channel(6).play(back_ground_)
-			back_ground_.play()
 			font = pygame.font.Font("assets\\fonts\game_over.ttf", 90)
 			text = font.render(f'Coins : {coil_count}/24', True, "#F5F5F5")
 			text_rect = text.get_rect(center=(SCREEN_WIDTH/2,50))
@@ -770,6 +804,12 @@ while run:
 			health.update()
 			health.draw(screen)
 			collide()
+	elif game_state == "game_over":
+		game_over_menu.game_over_draw(screen)
+	elif game_state == "end_game":
+		back_ground_.stop()
+		winning_menu.end_game_draw(screen)
+
 			
 
 	#event handlers
@@ -778,23 +818,57 @@ while run:
 			run = False
 		
 		if game_state == "start_game":
-			start_game_menu.play_button.hover()
-			start_game_menu.quit_button.hover()
-			if start_game_menu.play_button.button_clicked(event):
+			start_game_menu.buttons[0].hover()
+			start_game_menu.buttons[1].hover()
+			if play_starting_menu_music_one_time:
+				start_game_sound.play(loops=-1)
+			if start_game_menu.buttons[0].button_clicked(event):
+				start_game_sound.stop()
+				back_ground_.play(loops=-1)
+				pygame.mouse.set_visible(False)
 				game_state = "playing"
-			if start_game_menu.quit_button.button_clicked(event):
+			if start_game_menu.buttons[1].button_clicked(event):
 				quit_game()
 		elif game_state == "playing":
 			# puase menu events handler
+			start_game_sound.stop()
 			if event.type == pygame.KEYDOWN:
-				if event.key == pygame.K_ESCAPE or  health.sprite.index == 4:       #  i edited this lineeeeeeeeeee
+				if event.key == pygame.K_ESCAPE:
+					back_ground_.stop()
+					pause_menu_sound.play()
+					pygame.mouse.set_visible(True)
 					pause_or_not = True
-				if  player.sprite.rect.y > SCREEN_HEIGHT + 100:            #  i edited this lineeeeeeeeeee
-					pause_or_not = True                              #  i edited this lineeeeeeeeeee
-			if pause_menu.resume_button.button_clicked(event):
+			pause_menu.buttons[0].hover()
+			pause_menu.buttons[1].hover()
+			if pause_menu.buttons[0].button_clicked(event):
+				back_ground_.play(loops=-1)
+				pygame.mouse.set_visible(False)
 				pause_or_not = False
-			if pause_menu.quit_button.button_clicked(event):
+			if pause_menu.buttons[1].button_clicked(event):
+				back_ground_.stop()
+				start_game_sound.play(loops=-1)
+				play_starting_menu_music_one_time = False
 				pause_or_not = False
+				game_state = "start_game"
+
+
+			if health.sprite.index == 4 or player.sprite.rect.top > SCREEN_HEIGHT + 100 or player_2.sprite.rect.top > SCREEN_HEIGHT + 100:
+				back_ground_.stop()
+				pygame.mouse.set_visible(True)
+				game_over_sound.play()
+				game_state = "game_over"
+		
+		elif game_state == "game_over":
+			game_over_menu.buttons[0].hover()
+			game_over_menu.buttons[1].hover()
+			if game_over_menu.buttons[0].button_clicked(event):
+				game_over_sound.stop()
+				back_ground_.play(loops=-1)
+				game_state = "playing"
+			if game_over_menu.buttons[1].button_clicked(event):
+				play_starting_menu_music_one_time = False
+				start_game_sound.play(loops=-1)
+				game_over_sound.stop()
 				game_state = "start_game"
 
 	pygame.display.update()
