@@ -2,6 +2,7 @@ import pygame
 from sound import *
 from healthbar import *
 from game_menu import StartGameMenu,PauseGameMenu,GameOverMenu,WinningMenu
+from controller import Joystickclass
 
 pygame.init()
 clock = pygame.time.Clock()
@@ -11,6 +12,7 @@ SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT),pygame.FULLSCREEN)
 pygame.display.set_caption("assets\Parallax")
+controller = Joystickclass()
 
 
 pygame.mixer.set_num_channels(10)
@@ -287,18 +289,18 @@ class Player(pygame.sprite.Sprite):
 
 		if self.name == "player_level_2_2":          # 555555555555555555
 
-			if keys[pygame.K_a] :
+			if keys[pygame.K_a] or controller.joystick_check_if_run_left():
 				self.x_velocity = -5
 				self.type = image("running_2",self.flip)
 				self.flip = True
 				
-			if keys[pygame.K_d] :
+			if keys[pygame.K_d] or controller.joystick_check_if_run_right():
 				self.x_velocity = 5
 				self.type = image("running_2")
 				self.flip = False
 				
 			# Jumping
-			if keys[pygame.K_w] and self.on_ground:
+			if (keys[pygame.K_w] or controller.joystick_check_if_jump____A_button()) and self.on_ground:
 				self.y_velocity = -18
 				self.on_ground = False
 				self.type = image('jump_2')
@@ -308,7 +310,7 @@ class Player(pygame.sprite.Sprite):
 				if self.rect.colliderect(monsters_level_2.sprites()[i].rect):
 					self.type = image('damage_2')
 			
-			if keys[pygame.K_f]:
+			if keys[pygame.K_f] or controller.joystick_check_if_atacking___B_button():
 				self.type = image('attack_2',self.flip)
 				pygame.mixer.Channel(2).play(self.attack_sound)
 
@@ -657,8 +659,8 @@ def collide():
 	for i in range(len(monsters_level_2.sprites())):
 		if monsters_level_2.sprites()[i].rect.colliderect(player_level_2_2.sprite.rect) and not(key[pygame.K_RSHIFT]) and current_time - player_level_2_2.sprite.last_update >= player_level_2_2.sprite.hit_cooldown:
 			player_level_2_2.sprite.last_update = current_time
-			health.sprite.index += 1
-			pygame.mixer.Channel(7).play(player_level_2.sprite.damage)
+			# health.sprite.index += 1
+			# pygame.mixer.Channel(7).play(player_level_2.sprite.damage)
 
 	for i in range(len(objects_d_level_2.sprites())):
 		if objects_d_level_2.sprites()[i].name == "chess":
@@ -918,7 +920,7 @@ while run:
 
 	elif game_state == "end_game":
 		back_ground_.stop()
-		winning_menu.end_game_draw()
+		winning_menu.end_game_draw(screen)
 			
 
 	#event handlers

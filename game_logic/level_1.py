@@ -2,6 +2,7 @@ import pygame
 from sound import *
 from healthbar import *
 from game_menu import StartGameMenu,PauseGameMenu,GameOverMenu,WinningMenu
+from controller import Joystickclass
 
 pygame.init()
 pygame.mixer.init()
@@ -12,6 +13,7 @@ SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("assets\Parallax")
+controller = Joystickclass()
 
 # pygame.FULLSCREEN
 pygame.mixer.set_num_channels(10)
@@ -246,18 +248,18 @@ class Player(pygame.sprite.Sprite):
 
 		if self.name == "player_2":
 
-			if keys[pygame.K_a] :
+			if keys[pygame.K_a] or controller.joystick_check_if_run_left():
 				self.x_velocity = -5
 				self.type = image("running_2",self.flip)
 				self.flip = True
 				
-			if keys[pygame.K_d] :
+			if keys[pygame.K_d] or controller.joystick_check_if_run_right():
 				self.x_velocity = 5
 				self.type = image("running_2")
 				self.flip = False
 				
 			# Jumping
-			if keys[pygame.K_w] and self.on_ground:
+			if (keys[pygame.K_w] or controller.joystick_check_if_jump____A_button()) and self.on_ground:
 				self.y_velocity = -18
 				self.on_ground = False
 				self.type = image('jump_2')
@@ -268,7 +270,7 @@ class Player(pygame.sprite.Sprite):
 				if self.rect.colliderect(monsters.sprites()[i].rect):
 					self.type = image('damage_2')
 			
-			if keys[pygame.K_f]:
+			if keys[pygame.K_f] or controller.joystick_check_if_atacking___B_button():
 				self.type = image('attack_2',self.flip)
 				x = 0
 				if x == 0 :
@@ -569,8 +571,8 @@ def collide():
 	for i in range(len(monsters.sprites())):	
 		if monsters.sprites()[i].rect.colliderect(player_2.sprite.rect) and not(key[pygame.K_f]) and current_time - player_2.sprite.last_update >= player_2.sprite.hit_cooldown:
 			player_2.sprite.last_update = current_time
-			health.sprite.index += 1
-			pygame.mixer.Channel(5).play(player_2.sprite.damage)
+			# health.sprite.index += 1
+			# pygame.mixer.Channel(5).play(player_2.sprite.damage)
 
 	for i in range(len(objects_d.sprites())):
 		if objects_d.sprites()[i].name == "door":
@@ -657,7 +659,7 @@ objects.add(Obstacle('land_2',(ground_width * 6)+100, SCREEN_HEIGHT-400))
 objects.add(Obstacle('land_2',(ground_width * 6)+350, SCREEN_HEIGHT-400))
 
 objects.add(Obstacle('land',(ground_width * 8)+100, SCREEN_HEIGHT-400))
-objects.add(Obstacle('land_2',(ground_width * 1)+100, SCREEN_HEIGHT-220))
+objects.add(Obstacle('land_2',(ground_width * 1)+100, SCREEN_HEIGHT-210))
 
 
 
@@ -666,7 +668,7 @@ monsters = pygame.sprite.Group()
 monsters.add(Monsters('eater',2,2,300,3))
 monsters.add(Monsters('eater',3,3,300,3))
 monsters.add(Monsters('slime',4,4,300,4))
-monsters.add(Monsters('flying',5,5,1000,2))
+# monsters.add(Monsters('flying',5,5,1000,2))
 monsters.add(Monsters('slime',5,5,1000,4))
 monsters.add(Monsters('eater',5,5,1000,3))
 monsters.add(Monsters('eater',6,6,300,3))
